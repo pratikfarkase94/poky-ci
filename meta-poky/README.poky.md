@@ -1,7 +1,6 @@
-Poky
+poky
 ====
 
-POKY PRATIK
 
 
 Poky is an integration of various components to form a pre-packaged
@@ -13,8 +12,7 @@ and custom containers. There are reference demo images ranging from X11/GTK+
 application development using QEMU emulation and a standalone toolchain and
 SDK suitable for IDE integration.
 
-Additional information on the specifics of hardware that Poky supports
-is available in README.hardware. Further hardware support can easily be added
+Additional information on the specifics of hardware that Poky supportavailable in README.hardware. Further hardware support can easily be added
 in the form of BSP layers which extend the systems capabilities in a modular way.
 Many layers are available and can be found through the
 [layer index](https://layers.openembedded.org/).

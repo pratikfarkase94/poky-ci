@@ -56,9 +56,3 @@ jobs:
           source oe-init-build-env
           bitbake core-image-minimal
 
-      - name: Upload Build Artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: yocto-build-output
-          path: poky/build/tmp/deploy/images/
-
