@@ -48,7 +48,6 @@ jobs:
           echo 'SSTATE_DIR = "${{ github.workspace }}/sstate-cache"' >> conf/local.conf
           echo 'BB_NUMBER_THREADS = "4"' >> conf/local.conf
           echo 'PARALLEL_MAKE = "-j4"' >> conf/local.conf
-          echo 'MACHINE = "qemuriscv64"' >> conf/local.conf
 
       - name: Build Yocto Image
         run: |
