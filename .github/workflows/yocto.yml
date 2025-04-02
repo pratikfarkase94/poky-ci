@@ -1,0 +1,64 @@
+name: Yocto Build and CI/CD
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest  # Use self-hosted for better performance
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Install Dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y gawk wget git diffstat unzip texinfo gcc \
+                             build-essential chrpath socat cpio python3 \
+                             python3-pip python3-pexpect xz-utils debianutils \
+                             iputils-ping python3-git python3-jinja2 libegl1-mesa \
+                             libsdl1.2-dev pylint xterm
+
+      - name: Setup Caching
+        uses: actions/cache@v3
+        with:
+          path: |
+            ${{ github.workspace }}/sstate-cache
+            ${{ github.workspace }}/downloads
+          key: yocto-cache-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            yocto-cache-${{ runner.os }}-
+
+      - name: Clone Yocto Project
+        run: |
+          git clone -b kirkstone git://git.yoctoproject.org/poky.git
+          cd poky
+          source oe-init-build-env
+
+      - name: Configure BitBake
+        run: |
+          cd poky/build
+          echo 'DL_DIR = "${{ github.workspace }}/downloads"' >> conf/local.conf
+          echo 'SSTATE_DIR = "${{ github.workspace }}/sstate-cache"' >> conf/local.conf
+          echo 'BB_NUMBER_THREADS = "4"' >> conf/local.conf
+          echo 'PARALLEL_MAKE = "-j4"' >> conf/local.conf
+          echo 'MACHINE = qemuriscv64' >> conf/local.conf
+
+      - name: Build Yocto Image
+        run: |
+          cd poky
+          source oe-init-build-env
+          bitbake core-image-minimal
+
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: yocto-build-output
+          path: poky/build/tmp/deploy/images/
+
